@@ -130,6 +130,7 @@ function validateUser(req, res, next) {
         return res.status(400).json({ message: "Missing user data !" });
       } 
         next();
+
   }
 };
 function validatePost() {
