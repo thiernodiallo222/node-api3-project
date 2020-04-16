@@ -22,7 +22,8 @@ router.post('/:id/posts', validatePost(), validateUserId(), (req, res) => {
   db2.insert(req.body)
     .then(post => {
       res.status(201).json(post);
-    }).catch(() => {
+    })
+    .catch((error) => {
       console.log(error);
       req.status(500).json({ message: "An unknown error occurred !" });
   })
@@ -126,25 +127,33 @@ function validateUser(req, res, next) {
   // do your magic!
   return (req, res, next) => {
        if (!req.body.name) {
-        res.status(400).json({ message: "Missing user data !" });
-      } else {
+        return res.status(400).json({ message: "Missing user data !" });
+      } 
         next();
-    }
   }
 };
-
 function validatePost() {
-  // do your magic!
   return (req, res, next) => {
-    // if (!req.body) {
-    //   res.status(400).json({ message: "Missing post data !" });
-    // } else
-      if (!req.body.text) {
-    return res.status(400).json({ message: "Missing required text field" });
-    } 
-      next();
-    
+    if (!req.body.text) {
+    return res.status(404).json({ message: "Missing required text field !" }); 
+    }
+    next();
   }
-};
+}
+
+// function validatePost() {
+//   // do your magic!
+//   return (req, res, next) => {
+//     if (req.body) {
+//       if (req.body.text) {
+//         next();
+//       } else {
+//         res.status(404).json({ message: "Missing required text field !" });
+//       }
+//     } else {
+//       res.status(404).json({ message: "Missing post data !" })
+//     }
+//   }
+//   };
 module.exports = router;
  
