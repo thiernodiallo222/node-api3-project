@@ -3,12 +3,10 @@ const express = require('express');
 const router = express.Router();
 
 const db = require('./userDb');
+const db2 = require('../posts/postDb');
 
-router.post('/', (req, res) => {
+router.post('/', validateUser(), (req, res) => {
   // do your magic!
-  if (!req.body.name) {
-    res.status(400).json({message: "please provide a name"});
-  } else {
     db.insert(req.body)
       .then(user => {
         res.status(201).json(user);
@@ -16,14 +14,18 @@ router.post('/', (req, res) => {
       .catch(error => {
         console.log(error)
         res.status(500).json({message:"Unknown error !"})
-        });
-  }
+        })
 });  
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validatePost(), validateUserId(), (req, res) => {
   // do your magic!
-  
-
+  db2.insert(req.body)
+    .then(post => {
+      res.status(201).json(post);
+    }).catch(() => {
+      console.log(error);
+      req.status(500).json({ message: "An unknown error occurred !" });
+  })
 });
 
 router.get('/', (req, res) => {
@@ -35,30 +37,15 @@ router.get('/', (req, res) => {
     .catch(error => console.log(error))
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId(), (req, res, next) => {
   // do your magic!
-  const userId = req.params.id;
-  db.getById(userId)
-    .then(user => {
-      if (!user) {
-        res.status(400).json({ message: "User not found in our database" });
-      } else {
-        res.status(200).json(user);
-      }
-    })
-    .catch(error => {
-      console.log(error)
-      res.status(500).json({ message: "An unknown error occurred" })
-    })
+  res.status(200).json(req.user);
+
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId(), (req, res) => {
   // do your magic!
-  db.getById(req.params.id)
-    .then(user => {
-      if (!user) {
-        res.status(400).json({message: "cannot find that specific user"})
-      } else {
+ 
         db.getUserPosts(req.params.id)
           .then(post => {
             if (!post) {
@@ -67,8 +54,7 @@ router.get('/:id/posts', (req, res) => {
               res.status(200).json(post);
           }
         })
-      }
-    })
+      
     .catch(error => {
       console.log(error);
       res.status(500).json({message: "An unknown error occurred !"})
@@ -77,7 +63,7 @@ router.get('/:id/posts', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   // do your magic!
-  const usr = db.getById(req.params.id);
+
   db.remove(req.params.id)
     .then(user => {
       if (!user) {
@@ -115,16 +101,49 @@ router.put('/:id', (req, res) => {
 
 //custom middleware
 
-function validateUserId(req, res, next) {
+function validateUserId() {
   // do your magic!
-}
+  return (req, res, next) => {
+
+    db.getById(req.params.id)
+      .then(user => {
+        if (user) {
+          req.user = user;
+          next();
+        } else {
+          res.status(400).json({ message: "User not found !" });
+        }
+      })
+      .catch(error => {
+        console.log(error)
+        res.status(500).json({ message: "An unknown error occurred" })
+      })
+  }
+
+};
 
 function validateUser(req, res, next) {
   // do your magic!
+  return (req, res, next) => {
+       if (!req.body.name) {
+        res.status(400).json({ message: "Missing user data !" });
+      } else {
+        next();
+    }
+  }
 }
 
-function validatePost(req, res, next) {
+function validatePost() {
   // do your magic!
+  return (req, res, next) => {
+    if (!req.body) {
+      res.status(400).json({ message: "Missing post data !" });
+    }else if (!req.body.text){
+      res.status(400).json({ message: "Missing required text field" });
+    } else {
+      next();
+    }
+  }
 }
-
 module.exports = router;
+ 
