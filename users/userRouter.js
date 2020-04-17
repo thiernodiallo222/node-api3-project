@@ -124,7 +124,7 @@ function validateUserId() {
 
 };
 
-function validateUser(req, res, next) {
+function validateUser() {
   // do your magic!
   return (req, res, next) => {
        if (!req.body.name) {
@@ -134,28 +134,21 @@ function validateUser(req, res, next) {
 
   }
 };
-function validatePost() {
-  return (req, res, next) => {
-    if (!req.body.text) {
-    return res.status(404).json({ message: "Missing required text field !" }); 
-    }
-    next();
-  }
-}
 
-// function validatePost() {
-//   // do your magic!
-//   return (req, res, next) => {
-//     if (req.body) {
-//       if (req.body.text) {
-//         next();
-//       } else {
-//         res.status(404).json({ message: "Missing required text field !" });
-//       }
-//     } else {
-//       res.status(404).json({ message: "Missing post data !" })
-//     }
-//   }
-//   };
+
+function validatePost() {
+  // do your magic!
+  return (req, res, next) => {
+    if (req.body) {
+      if (req.body.text) {
+        next();
+      } else {
+        res.status(404).json({ message: "Missing required text field !" });
+      }
+    } else {
+      res.status(404).json({ message: "Missing post data !" })
+    }
+  }
+  };
 module.exports = router;
  
