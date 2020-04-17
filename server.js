@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const server = express();
+require('dotenv').config();
 
 server.use(morgan("short"));
 server.use(logger);
