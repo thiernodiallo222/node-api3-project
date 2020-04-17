@@ -6,7 +6,7 @@ server.use(morgan("short"));
 server.use(logger);
 
 server.get('/', (req, res) => {
-  res.send(`<<h2>Welcome to ${process.env.COHORT}</h2>
+  res.send(`<h2>Welcome to ${process.env.COHORT}</h2>
             <h2>COHORT: ${process.env.COHORT}</h2>
             <h2>Fun Fact: ${process.env.FUN_FACT}</h2>
   `);
