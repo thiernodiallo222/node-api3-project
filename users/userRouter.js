@@ -19,7 +19,8 @@ router.post('/', validateUser(), (req, res) => {
 
 router.post('/:id/posts', validatePost(), validateUserId(), (req, res) => {
   // do your magic!
-  db2.insert(req.body)
+  const postData ={ ...req.body, user_id: req.params.id}
+  db2.insert(postData)
     .then(post => {
       res.status(201).json(post);
     })
