@@ -10,7 +10,7 @@ server.get('/', (req, res) => {
   res.send(`<h6>Welcome to ${process.env.COHORT}</h6>
             <h6>COHORT: ${process.env.COHORT}</h6>
             <h6>Fun Fact: ${process.env.FUN_FACT}</h6>
-            <h6>EndPoint: /users, /posts</h6>
+            <h6>EndPoints: /users;   /posts</h6>
   `);
 });
 server.use((req, res) => {
