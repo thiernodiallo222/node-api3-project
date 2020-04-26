@@ -2,7 +2,7 @@
 const express = require('express');
 const app = express();
 const userRoutes = require('./users/userRouter');
-const postRouters = require('./posts/postRouter');
+const postRoutes = require('./posts/postRouter');
 require('dotenv').config();
 const welcome = require('./server');
 const cors = require('cors');
@@ -12,7 +12,7 @@ const port = process.env.PORT||5000;
 
 app.use(cors());
 app.use('/users', userRoutes);
-app.use('/posts', postRouters);
+app.use('/posts', postRoutes);
 app.use('/', welcome);
 app.listen(port, () => console.log(`listening on port ${port}`));
 
